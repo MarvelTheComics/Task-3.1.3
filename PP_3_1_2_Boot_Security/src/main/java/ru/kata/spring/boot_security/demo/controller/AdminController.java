@@ -9,17 +9,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.security.UserDetailsImp;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashSet;
-import java.util.Set;
-
 
 @Controller
 @RequestMapping("/admin")
@@ -40,10 +33,8 @@ public class AdminController {
     }
 
     @PostMapping("/edit")
-    public String editUser(@ModelAttribute("user") User user, @RequestParam("roleId") Integer roleId, HttpServletRequest request) {
-        Set<Role> roles = new HashSet<>();
-        roles.add(roleService.getRole(roleId));
-        userService.update(user, roles);
+    public String editUser(@ModelAttribute("user") User user, @RequestParam("roleId") Integer roleId) {
+        userService.update(user, roleService.getRole(roleId));
         return "redirect:/admin";
     }
 

@@ -25,7 +25,9 @@ public class UserServiceImp implements UserService{
 
     @Transactional
     @Override
-    public void add(User user, Set<Role> roles) {
+    public void add(User user, Role role) {
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
         user.setRoles(roles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userDao.add(user);
@@ -39,7 +41,9 @@ public class UserServiceImp implements UserService{
 
     @Transactional
     @Override
-    public void update(User user, Set<Role> roles) {
+    public void update(User user, Role role) {
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
         user.setRoles(roles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userDao.update(user);
