@@ -1,5 +1,9 @@
 package ru.kata.spring.boot_security.demo.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +14,9 @@ import javax.persistence.Table;
 import java.util.Objects;
 import java.util.Set;
 
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "Roles")
 public class Role {
@@ -21,37 +28,10 @@ public class Role {
     @ManyToMany(mappedBy = "roles")
     private Set <User> users;
 
-    public Role() {
-    }
-
-
     public Role(String role) {
         this.name = role;
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String role) {
-        this.name = role;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
 
     @Override
     public boolean equals(Object o) {

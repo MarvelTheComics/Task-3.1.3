@@ -1,15 +1,17 @@
 package ru.kata.spring.boot_security.demo.service;
 
+import ru.kata.spring.boot_security.demo.dto.RequestUserDtoEdit;
+import ru.kata.spring.boot_security.demo.dto.RequestUserDtoRegistration;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
-import java.util.Set;
 
 public interface UserService {
-    void add(User user, Role role);
+    void add(RequestUserDtoRegistration requestUserDtoRegistration);
     void delete(Integer id);
-    void update(User user, Role role);
+    void update(RequestUserDtoEdit requestUserDtoEdit, Integer id);
     List<User> getUsers();
-    User getUserByID(Integer id);
+    User getUserById(Integer id);
 }

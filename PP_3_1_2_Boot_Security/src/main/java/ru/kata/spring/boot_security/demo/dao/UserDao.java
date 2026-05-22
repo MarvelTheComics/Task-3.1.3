@@ -10,6 +10,6 @@ public interface UserDao {
     void delete(Integer id);
     List<User> getUsers();
     void update(User user);
-    User getUserByID(Integer id);
+    Optional<User> getUserByID(Integer id);
     Optional<User> findByEmail(String email);
 }

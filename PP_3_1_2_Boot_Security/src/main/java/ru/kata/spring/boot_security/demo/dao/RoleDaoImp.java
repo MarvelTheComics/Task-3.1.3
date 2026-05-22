@@ -6,6 +6,7 @@ import ru.kata.spring.boot_security.demo.model.Role;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class RoleDaoImp implements RoleDao{
@@ -19,8 +20,8 @@ public class RoleDaoImp implements RoleDao{
     }
 
     @Override
-    public Role getRole(Integer id) {
-        return em.find(Role.class, id);
+    public Optional<Role> getRole(Integer id) {
+        return Optional.ofNullable(em.find(Role.class, id));
     }
 
 }

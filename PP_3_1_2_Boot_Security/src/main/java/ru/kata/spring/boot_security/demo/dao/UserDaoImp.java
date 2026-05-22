@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.dao;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.model.User;
 
@@ -21,10 +22,10 @@ public class UserDaoImp implements UserDao{
 
 
     public void delete(Integer id) {
-        User user = entityManager.find(User.class, id);
-        if(user != null) {
-            entityManager.remove(user);
-        }
+        User user = Optional.ofNullable(entityManager.find(User.class, id))
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("User not found!"));
+        entityManager.remove(user);
     }
 
 
@@ -38,8 +39,8 @@ public class UserDaoImp implements UserDao{
     }
 
 
-    public User getUserByID(Integer id) {
-        return entityManager.find(User.class, id);
+    public Optional<User> getUserByID(Integer id) {
+        return Optional.ofNullable(entityManager.find(User.class, id));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.service;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dao.RoleDao;
@@ -24,6 +25,6 @@ public class RoleServiceImp implements RoleService{
     @Transactional
     @Override
     public Role getRole(Integer id) {
-        return roleDao.getRole(id);
+        return roleDao.getRole(id).orElseThrow(() -> new UsernameNotFoundException("Role is not found!"));
     }
 }
