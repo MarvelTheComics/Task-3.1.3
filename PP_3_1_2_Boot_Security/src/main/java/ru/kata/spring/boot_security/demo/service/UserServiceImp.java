@@ -5,10 +5,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
-import ru.kata.spring.boot_security.demo.dto.RequestUserDtoEdit;
-import ru.kata.spring.boot_security.demo.dto.RequestUserDtoRegistration;
 import ru.kata.spring.boot_security.demo.mapper.UserMapper;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.record.RequestRecordEdit;
+import ru.kata.spring.boot_security.demo.record.RequestRecordReg;
 
 import java.util.HashSet;
 import java.util.List;
@@ -24,24 +24,21 @@ public class UserServiceImp implements UserService {
     public UserServiceImp(UserDao userDao, PasswordEncoder passwordEncoder, RoleService roleService, UserMapper userMapper) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
-        this.userMapper = userMapper;
         this.roleService = roleService;
+        this.userMapper = userMapper;
     }
 
 
     @Transactional
     @Override
-    public void add(RequestUserDtoRegistration requestUserDtoRegistration) {
-        User newUser = userMapper.requestUserDtoToUserReg(requestUserDtoRegistration);
-        if(requestUserDtoRegistration.getRoleId() == null) {
-            newUser.setRoles(new HashSet<>(Set.of(roleService.getRole(1))));
-        } else {
-            newUser.setRoles(new HashSet<>(Set.of(roleService.getRole(
-                            requestUserDtoRegistration.getRoleId()))));
-        }
-        newUser.setPassword(passwordEncoder.encode(requestUserDtoRegistration.getPassword()));
+    public void add(RequestRecordReg requestRecordReg) {
+        User newUser = userMapper.requestReg(requestRecordReg);
+        newUser.setRoles(new HashSet<>(Set.of(roleService.getRole(
+                requestRecordReg.roleId()))));
         newUser.setId(null);
+        newUser.setPassword(passwordEncoder.encode(requestRecordReg.password()));
         userDao.add(newUser);
+        System.out.println("service ok");
     }
 
     @Transactional
@@ -52,14 +49,14 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     @Override
-    public void update(RequestUserDtoEdit requestUserDtoEdit, Integer id) {
-        User editUser = userMapper.requestUserDtoToUserUpdate(requestUserDtoEdit,
+    public void update(RequestRecordEdit requestRecordEdit, Integer id) {
+        User editUser = userMapper.requestEdit(requestRecordEdit,
                 userDao.getUserByID(id).orElseThrow(() -> new UsernameNotFoundException("User no found!")));
-        if(requestUserDtoEdit.getPassword() != null && !requestUserDtoEdit.getPassword().isBlank()) {
-            editUser.setPassword(passwordEncoder.encode(requestUserDtoEdit.getPassword()));
+        if(requestRecordEdit.password() != null && !requestRecordEdit.password().isBlank()) {
+            editUser.setPassword(passwordEncoder.encode(requestRecordEdit.password()));
         }
-        if(requestUserDtoEdit.getRoleId() != null) {
-            editUser.setRoles(new HashSet<>(Set.of(roleService.getRole(requestUserDtoEdit.getRoleId()))));
+        if(requestRecordEdit.roleId() != null) {
+            editUser.setRoles(new HashSet<>(Set.of(roleService.getRole(requestRecordEdit.roleId()))));
         }
         userDao.update(editUser);
     }

@@ -11,12 +11,12 @@ async function loadMe() {
         myInfo.innerHTML = `
             <tr>
                 <td>${data.id}</td>
-                <td>${data.email ?? ""}</td>
-                <td>${data.name ?? ""}</td>
-                <td>${data.secondName ?? ""}</td>
-                <td>${data.age ?? ""}</td>
-                <td>${data.eyeColor ?? ""}</td>
-                <td>${data.roles.join(",") ?? ""}</td>
+                <td>${data.email || ""}</td>
+                <td>${data.name || ""}</td>
+                <td>${data.secondName || ""}</td>
+                <td>${data.age || ""}</td>
+                <td>${data.eyeColor || ""}</td>
+                <td>${data.roles.join(",") || ""}</td>
             </tr>
             `;
     } catch (e) {

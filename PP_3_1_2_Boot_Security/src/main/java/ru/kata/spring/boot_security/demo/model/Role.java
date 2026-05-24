@@ -1,16 +1,16 @@
 package ru.kata.spring.boot_security.demo.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 import java.util.Objects;
 import java.util.Set;
 
@@ -26,7 +26,7 @@ public class Role {
     @Column(name = "Name")
     private String name;
     @ManyToMany(mappedBy = "roles")
-    private Set <User> users;
+    private Set<User> users;
 
     public Role(String role) {
         this.name = role;

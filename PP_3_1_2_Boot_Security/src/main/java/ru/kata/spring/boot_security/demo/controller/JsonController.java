@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,15 +16,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.kata.spring.boot_security.demo.dto.RequestUserDtoEdit;
-import ru.kata.spring.boot_security.demo.dto.RequestUserDtoRegistration;
-import ru.kata.spring.boot_security.demo.dto.ResponseUserDto;
-import ru.kata.spring.boot_security.demo.dto.ResponseUserDtoForAdmin;
 import ru.kata.spring.boot_security.demo.mapper.UserMapper;
+import ru.kata.spring.boot_security.demo.record.RequestRecordEdit;
+import ru.kata.spring.boot_security.demo.record.RequestRecordReg;
+import ru.kata.spring.boot_security.demo.record.ResponseRecord;
 import ru.kata.spring.boot_security.demo.security.UserDetailsImp;
 import ru.kata.spring.boot_security.demo.service.UserService;
-
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,28 +38,28 @@ public class JsonController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
-    public ResponseEntity<List<ResponseUserDtoForAdmin>> getUsers() {
+    public ResponseEntity<List<ResponseRecord>> getUsers() {
         return ResponseEntity.ok(userService.getUsers().stream()
-                .map(userMapper::userToResponseUserDtoForAdmin)
+                .map(userMapper::response)
                 .collect(Collectors.toList()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users/{id}")
-    public ResponseEntity<ResponseUserDtoForAdmin> getUser(@PathVariable Integer id) {
-        return ResponseEntity.ok(userMapper.userToResponseUserDtoForAdmin(userService.getUserById(id)));
+    public ResponseEntity<ResponseRecord> getUser(@PathVariable Integer id) {
+        return ResponseEntity.ok(userMapper.response(userService.getUserById(id)));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/users/{id}")
-    public ResponseEntity<HttpStatus> edit(@RequestBody @Valid RequestUserDtoEdit requestUserDtoEdit,
+    public ResponseEntity<HttpStatus> edit(@RequestBody @Valid RequestRecordEdit requestRecordEdit,
                                            BindingResult bindingResult,
                                            @PathVariable Integer id) {
         if (bindingResult.hasErrors()) {
             throw new IllegalArgumentException(errorBindingResult(bindingResult));
         }
 
-        userService.update(requestUserDtoEdit, id);
+        userService.update(requestRecordEdit, id);
         return ResponseEntity.ok().build();
     }
 
@@ -73,20 +71,21 @@ public class JsonController {
     }
 
     @PostMapping({"/users", "/registration"})
-    public ResponseEntity<HttpStatus> createUser(@RequestBody @Valid RequestUserDtoRegistration requestUserDtoRegistration,
+    public ResponseEntity<HttpStatus> createUser(@RequestBody @Valid RequestRecordReg requestRecordReg,
                                                  BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new IllegalArgumentException(errorBindingResult(bindingResult));
         }
 
-        userService.add(requestUserDtoRegistration);
+        userService.add(requestRecordReg);
+        System.out.println("controller ok");
         return ResponseEntity.ok().build();
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
-    public ResponseEntity<ResponseUserDto> getUser(@AuthenticationPrincipal UserDetailsImp userDetailsImp) {
-        return ResponseEntity.ok(userMapper.responseUserToUserDto(userDetailsImp.getUser()));
+    public ResponseEntity<ResponseRecord> getUser(@AuthenticationPrincipal UserDetailsImp userDetailsImp) {
+        return ResponseEntity.ok(userMapper.response(userDetailsImp.getUser()));
     }
 
     static String errorBindingResult(BindingResult bindingResult) {

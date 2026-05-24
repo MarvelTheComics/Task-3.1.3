@@ -10,7 +10,6 @@ async function createUser() {
             eyeColor: document.getElementById('eyeColorCreate').value || null,
             age: Number(document.getElementById('ageCreate').value) || null,
             password: document.getElementById('passwordCreate').value,
-            roleId: Number(document.getElementById('roleCreate').value) || null
         }
 
         try {
@@ -26,10 +25,10 @@ async function createUser() {
                 throw new Error("Error loading")
             }
             alert('Пользователь создан!')
-
         } catch (e) {
             console.error(e)
         }
+        window.location.href = "/login";
     });
 }
 

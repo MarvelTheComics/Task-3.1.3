@@ -1,56 +1,46 @@
 package ru.kata.spring.boot_security.demo.mapper;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
-import ru.kata.spring.boot_security.demo.dto.RequestUserDtoEdit;
-import ru.kata.spring.boot_security.demo.dto.RequestUserDtoRegistration;
-import ru.kata.spring.boot_security.demo.dto.ResponseUserDto;
-import ru.kata.spring.boot_security.demo.dto.ResponseUserDtoForAdmin;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.record.RequestRecordEdit;
+import ru.kata.spring.boot_security.demo.record.RequestRecordReg;
+import ru.kata.spring.boot_security.demo.record.ResponseRecord;
+
+import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
-public class UserMapper {
-    private final ModelMapper modelMapper;
+@Mapper(componentModel = "spring")
+public interface UserMapper {
+    @Mapping(target = "roles", source = "roles", qualifiedByName = "mapRoles")
+    ResponseRecord response(User user);
+    User requestReg(RequestRecordReg requestRecordReg);
 
-    public UserMapper(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
+    @Named("mapRoles")
+    default Set<String> mapRoles(Set<Role> roles) {
+        return roles.stream()
+                .map(Role::getName)
+                .map(role -> role.replace("ROLE_", ""))
+                .collect(Collectors.toSet());
     }
-
-    public ResponseUserDto responseUserToUserDto(User user) {
-        ResponseUserDto responseUserDto = modelMapper.map(user, ResponseUserDto.class);
-        responseUserDto.setRoles(user.getRoles().stream().map(Role::getName).map(role -> role.replace("ROLE_", "")).collect(Collectors.toSet()));
-        return responseUserDto;
-    }
-
-    public User requestUserDtoToUserReg(RequestUserDtoRegistration requestUserDto) {
-        return modelMapper.map(requestUserDto, User.class);
-    }
-
-    public User requestUserDtoToUserUpdate(RequestUserDtoEdit requestUserDtoEdit, User user) {
-        if (requestUserDtoEdit.getEmail() != null && !requestUserDtoEdit.getEmail().isBlank()) {
-            user.setEmail(requestUserDtoEdit.getEmail());
+    default User requestEdit(RequestRecordEdit requestRecordEdit, User user) {
+        if (requestRecordEdit.email() != null && !requestRecordEdit.email().isBlank()) {
+            user.setEmail(requestRecordEdit.email());
         }
-        if (requestUserDtoEdit.getName() != null && !requestUserDtoEdit.getName().isBlank()) {
-            user.setName(requestUserDtoEdit.getName());
+        if (requestRecordEdit.name() != null && !requestRecordEdit.name().isBlank()) {
+            user.setName(requestRecordEdit.name());
         }
-        if (requestUserDtoEdit.getSecondName() != null && !requestUserDtoEdit.getSecondName().isBlank()) {
-            user.setSecondName(requestUserDtoEdit.getSecondName());
+        if (requestRecordEdit.secondName() != null && !requestRecordEdit.secondName().isBlank()) {
+            user.setSecondName(requestRecordEdit.secondName());
         }
-        if (requestUserDtoEdit.getAge() != null) {
-            user.setAge(requestUserDtoEdit.getAge());
+        if (requestRecordEdit.age() != null) {
+            user.setAge(requestRecordEdit.age());
         }
-        if (requestUserDtoEdit.getEyeColor() != null && !requestUserDtoEdit.getEyeColor().isBlank()) {
-            user.setEyeColor(requestUserDtoEdit.getEyeColor());
+        if (requestRecordEdit.eyeColor() != null && !requestRecordEdit.eyeColor().isBlank()) {
+            user.setEyeColor(requestRecordEdit.eyeColor());
         }
         return user;
-    }
-
-    public ResponseUserDtoForAdmin userToResponseUserDtoForAdmin(User user) {
-        ResponseUserDtoForAdmin responseUserDtoForAdmin = modelMapper.map(user, ResponseUserDtoForAdmin.class);
-        responseUserDtoForAdmin.setRoles(user.getRoles().stream().map(Role::getName).map(role -> role.replace("ROLE_", "")).collect(Collectors.toSet()));
-        return responseUserDtoForAdmin;
     }
 }
 
