@@ -21,7 +21,6 @@ public class RoleDaoImp implements RoleDao{
 
     @Override
     public Optional<Role> getRole(Integer id) {
-        System.out.println("repo role ok");
         return Optional.ofNullable(em.find(Role.class, id));
     }
 
