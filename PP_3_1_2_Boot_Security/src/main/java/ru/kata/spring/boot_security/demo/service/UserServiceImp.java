@@ -38,7 +38,6 @@ public class UserServiceImp implements UserService {
         newUser.setId(null);
         newUser.setPassword(passwordEncoder.encode(requestRecordReg.password()));
         userDao.add(newUser);
-        System.out.println("service ok");
     }
 
     @Transactional
