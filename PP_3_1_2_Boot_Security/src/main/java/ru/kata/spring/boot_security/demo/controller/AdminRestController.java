@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,18 +19,17 @@ import ru.kata.spring.boot_security.demo.mapper.UserMapper;
 import ru.kata.spring.boot_security.demo.record.RequestRecordEdit;
 import ru.kata.spring.boot_security.demo.record.RequestRecordReg;
 import ru.kata.spring.boot_security.demo.record.ResponseRecord;
-import ru.kata.spring.boot_security.demo.security.UserDetailsImp;
 import ru.kata.spring.boot_security.demo.service.UserService;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
-public class JsonController {
+public class AdminRestController {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    public JsonController(UserService userService, UserMapper userMapper) {
+    public AdminRestController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
         this.userMapper = userMapper;
     }
@@ -78,14 +76,7 @@ public class JsonController {
         }
 
         userService.add(requestRecordReg);
-        System.out.println("controller ok");
         return ResponseEntity.ok().build();
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/me")
-    public ResponseEntity<ResponseRecord> getUser(@AuthenticationPrincipal UserDetailsImp userDetailsImp) {
-        return ResponseEntity.ok(userMapper.response(userDetailsImp.getUser()));
     }
 
     static String errorBindingResult(BindingResult bindingResult) {
